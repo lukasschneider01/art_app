@@ -4,6 +4,13 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+// Get base URL for file serving
+const getBaseUrl = () => {
+  return process.env.NODE_ENV === 'production'
+    ? 'https://art-app.onrender.com'
+    : 'http://localhost:5000';
+};
+
 // Configure multer for audio file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -70,7 +77,7 @@ router.post('/submit', upload.single('audioIntroduction'), async (req, res) => {
     const survey = new Survey({
       user: user._id,
       ...surveyDataObj,
-      audioIntroduction: req.file.path
+      audioIntroduction: `${getBaseUrl()}/${req.file.path}`
     });
 
     await survey.save();
