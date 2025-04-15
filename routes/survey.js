@@ -18,7 +18,9 @@ router.get('/audio/:filename', (req, res) => {
 
 // Get base URL for file serving
 const getBaseUrl = () => {
-  return 'https://art-app.onrender.com';
+  return process.env.NODE_ENV === 'production'
+    ? 'https://art-app.onrender.com'
+    : `http://localhost:${process.env.PORT || 5000}`;
 };
 
 // Configure multer for audio file uploads

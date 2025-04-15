@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://art-app.onrender.com'
+    baseURL: process.env.REACT_APP_API_URL || 'https://art-app.onrender.com'
 });
 
 // Add request interceptor for auth token
