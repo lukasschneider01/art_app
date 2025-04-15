@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import axios from 'axios';
+import api from '../../config/api';
 
 const AdminSurveys = () => {
   const [surveys, setSurveys] = useState([]);
@@ -39,7 +39,7 @@ const AdminSurveys = () => {
   const fetchSurveys = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/survey');
+      const res = await api.get('/api/survey');
       setSurveys(res.data);
       setLoading(false);
     } catch (err) {

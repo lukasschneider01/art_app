@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import {
   Typography,
@@ -25,7 +26,7 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from 'axios';
+import api from '../../config/api';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -45,7 +46,7 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/users');
+      const res = await api.get('/api/users');
       setUsers(res.data);
       setLoading(false);
     } catch (err) {
@@ -58,7 +59,7 @@ const AdminUsers = () => {
   // Handle user approval
   const handleApproveUser = async (userId) => {
     try {
-      await axios.post(`/api/auth/approve/${userId}`);
+      await api.post(`/api/auth/approve/${userId}`);
       
       // Update user in state
       setUsers(users.map(user => 

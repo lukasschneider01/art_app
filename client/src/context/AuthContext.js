@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 
 const AuthContext = createContext();
 
@@ -13,10 +13,10 @@ export const AuthProvider = ({ children }) => {
   // Set auth token in headers
   const setAuthToken = (token) => {
     if (token) {
-      axios.defaults.headers.common['x-auth-token'] = token;
+      api.defaults.headers.common['x-auth-token'] = token;
       localStorage.setItem('token', token);
     } else {
-      delete axios.defaults.headers.common['x-auth-token'];
+      delete api.defaults.headers.common['x-auth-token'];
       localStorage.removeItem('token');
     }
   };
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       setAuthToken(token);
       
       try {
-        const res = await axios.get('/api/users/me');
+        const res = await api.get('/api/users/me');
         setUser(res.data);
         setIsAuthenticated(true);
       } catch (err) {
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   // Register user
   const register = async (formData) => {
     try {
-      const res = await axios.post('/api/auth/register', formData);
+      const res = await api.post('/api/auth/register', formData);
       return res.data;
     } catch (err) {
       setError(err.response.data.msg);
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (formData) => {
     try {
-      const res = await axios.post('/api/auth/login', formData);
+      const res = await api.post('/api/auth/login', formData);
       setToken(res.data.token);
       setAuthToken(res.data.token);
       await loadUser();
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   // Verify token for survey access
   const verifyToken = async (token) => {
     try {
-      const res = await axios.get(`/api/auth/verify-token/${token}`);
+      const res = await api.get(`/api/auth/verify-token/${token}`);
       return res.data;
     } catch (err) {
       setError(err.response.data.msg);

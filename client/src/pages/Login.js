@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Typography, TextField, Button, Paper, Box, Alert } from '@mui/material';
 import AuthContext from '../context/AuthContext';
-import axios from 'axios';
+import api from '../config/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,9 +16,6 @@ const Login = () => {
   const [formError, setFormError] = useState('');
   
   const { email, password } = formData;
-  
-  // We'll only redirect after a successful login action, not automatically on page load
-  // This prevents the automatic redirection when a user visits the login page
   
   const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,7 +50,7 @@ const Login = () => {
               
               // Check if user has already submitted a survey
               try {
-                const surveyRes = await axios.get(`/api/survey/check-submission/${user._id}`);
+                const surveyRes = await api.get(`/api/survey/check-submission/${user._id}`);
                 if (surveyRes.data.hasSubmitted) {
                   // User has already submitted a survey - show message and prevent navigation
                   setFormError('You have already completed the survey. Thank you for your participation!');
@@ -108,20 +105,20 @@ const Login = () => {
           onChange={onChange}
         />
         
-        <Box mt={3}>
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
+        <Box sx={{ mt: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
             fullWidth
           >
             Login
           </Button>
         </Box>
         
-        <Box mt={2} textAlign="center">
+        <Box sx={{ mt: 2, textAlign: 'center' }}>
           <Typography variant="body2">
-            Don't have an account? <Link to="/register">Register</Link>
+            Don't have an account? <Link to="/register">Register here</Link>
           </Typography>
         </Box>
       </form>

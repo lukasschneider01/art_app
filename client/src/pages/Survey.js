@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import api from '../config/api';
 import axios from 'axios';
 import {
   Typography,
@@ -89,7 +90,7 @@ const Survey = () => {
       }
 
       try {
-        const res = await axios.get(`/api/auth/verify-token/${token}`);
+        const res = await api.get(`/api/auth/verify-token/${token}`);
         if (res.data.valid) {
           setTokenValid(true);
           setUserData(res.data);
@@ -180,8 +181,8 @@ const Survey = () => {
         return;
       }
 
-      // Use the full backend URL to avoid proxy issues
-      await axios.post('http://localhost:5000/api/survey/submit', formDataToSend, {
+      // Use the centralized API module for form submission
+      await api.post('/api/survey/submit', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

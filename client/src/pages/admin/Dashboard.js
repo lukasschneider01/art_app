@@ -4,7 +4,7 @@ import { Typography, Paper, Box, Grid, Card, CardContent, Button } from '@mui/ma
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import axios from 'axios';
+import api from '../../config/api';
 import AuthContext from '../../context/AuthContext';
 
 const AdminDashboard = () => {
@@ -19,13 +19,13 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
       try {
         // Get pending users count
-        const pendingUsersRes = await axios.get('/api/users/pending');
+        const pendingUsersRes = await api.get('/api/users/pending');
         
         // Get all users count
-        const allUsersRes = await axios.get('/api/users');
+        const allUsersRes = await api.get('/api/users');
         
         // Get surveys count
-        const surveysRes = await axios.get('/api/survey');
+        const surveysRes = await api.get('/api/survey');
         
         setStats({
           totalUsers: allUsersRes.data.length,
