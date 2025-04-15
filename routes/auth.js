@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
   try {
     // Check if user already exists
     let user = await User.findOne({ email });
-    
+
     if (user) {
       return res.status(400).json({ msg: 'User already exists' });
     }
@@ -65,14 +65,14 @@ router.post('/login', async (req, res) => {
   try {
     // Check if user exists
     let user = await User.findOne({ email });
-    
+
     if (!user) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    
+
     if (!isMatch) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
@@ -112,7 +112,7 @@ router.post('/login', async (req, res) => {
 router.post('/approve/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
+
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
@@ -124,17 +124,17 @@ router.post('/approve/:id', async (req, res) => {
 
     // Prepare email with access link
     const accessLink = `${process.env.FRONTEND_URL}/survey?token=${accessToken}`;
-    
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: 'Your Art Survey Access Link',
       html: `
-        <h2>Thank you for your interest in our Art Survey!</h2>
+        <h2>Thank you for your interest in the Art Survey!</h2>
         <p>Your request has been approved. Please use the link below to access the survey:</p>
         <p><a href="${accessLink}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Access Survey</a></p>
         <p>This link will expire in 7 days.</p>
-        <p>Best regards,<br>The Art Survey Team</p>
+        <p>Best regards,<br>Lukas Schneider</p>
       `
     };
 
@@ -142,21 +142,21 @@ router.post('/approve/:id', async (req, res) => {
       console.log('Attempting to send email with the following configuration:');
       console.log(`Email User: ${process.env.EMAIL_USER}`);
       console.log('Email Password: [HIDDEN]');
-      
+
       // Try to send email first
       const info = await transporter.sendMail(mailOptions);
       console.log('Email sent successfully:', info.response);
-      
+
       // Only update user status after email is sent successfully
       user.isApproved = true;
       user.accessToken = accessToken;
       user.accessTokenExpires = expiryDate;
       await user.save();
-      
+
       res.json({ msg: 'User approved and email sent successfully' });
     } catch (emailErr) {
       console.error('Email sending failed:', emailErr);
-      res.status(500).json({ 
+      res.status(500).json({
         msg: 'Failed to approve user: Email sending failed',
         error: emailErr.message
       });
@@ -173,9 +173,9 @@ router.post('/approve/:id', async (req, res) => {
 router.get('/verify-token/:token', async (req, res) => {
   try {
     const { token } = req.params;
-    
+
     // Find user with this token
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       accessToken: token,
       accessTokenExpires: { $gt: new Date() }
     });
@@ -184,8 +184,8 @@ router.get('/verify-token/:token', async (req, res) => {
       return res.status(401).json({ valid: false, msg: 'Invalid or expired token' });
     }
 
-    res.json({ 
-      valid: true, 
+    res.json({
+      valid: true,
       userId: user._id,
       name: user.name,
       email: user.email

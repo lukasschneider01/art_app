@@ -68,6 +68,9 @@ const Survey = () => {
     ideaGeneration: '',
     usesReferences: '',
     challenges: '',
+    preferredCreationTime: '',
+    emotionalState: '',
+    moodInfluence: '',
 
     // Career & Goals
     monetizes: '',
@@ -225,7 +228,10 @@ const Survey = () => {
       case 3: // Creative Process
         return (
           formData.ideaGeneration.trim().length >= 150 &&
-          formData.challenges.trim().length >= 150
+          formData.challenges.trim().length >= 150 &&
+          formData.preferredCreationTime.trim().length >= 150 &&
+          formData.emotionalState.trim().length >= 150 &&
+          formData.moodInfluence.trim().length >= 150
         );
       case 4: // Career & Goals
         if (formData.monetizes && formData.monetizationMethods.length === 0) {
@@ -278,6 +284,7 @@ const Survey = () => {
     'Animation',
     'Digital Art',
     'Sculpture',
+    'Interior Design',
     'Other'
   ];
 
@@ -778,9 +785,60 @@ const Survey = () => {
               required
               multiline
               rows={4}
-              sx={{ mb: 2 }}
+              sx={{ mb: 3 }}
               error={error && formData.challenges.trim() === ''}
               helperText={error && formData.challenges.trim() === '' ? 'This field is required' : `${formData.challenges.length}/150 characters`}
+              inputProps={{ maxLength: 150 }}
+            />
+
+            <TextField
+              label="When do you prefer to create art? Describe your ideal creative time and environment."
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="preferredCreationTime"
+              value={formData.preferredCreationTime}
+              onChange={handleChange}
+              required
+              multiline
+              rows={4}
+              sx={{ mb: 3 }}
+              error={error && formData.preferredCreationTime.trim() === ''}
+              helperText={error && formData.preferredCreationTime.trim() === '' ? 'This field is required' : `${formData.preferredCreationTime.length}/150 characters`}
+              inputProps={{ maxLength: 150 }}
+            />
+
+            <TextField
+              label="How do you feel emotionally when creating art? Describe your typical emotional state during the creative process."
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="emotionalState"
+              value={formData.emotionalState}
+              onChange={handleChange}
+              required
+              multiline
+              rows={4}
+              sx={{ mb: 3 }}
+              error={error && formData.emotionalState.trim() === ''}
+              helperText={error && formData.emotionalState.trim() === '' ? 'This field is required' : `${formData.emotionalState.length}/150 characters`}
+              inputProps={{ maxLength: 150 }}
+            />
+
+            <TextField
+              label="How do different moods influence your artistic style? Give specific examples of how your art changes with your emotional state."
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="moodInfluence"
+              value={formData.moodInfluence}
+              onChange={handleChange}
+              required
+              multiline
+              rows={4}
+              sx={{ mb: 2 }}
+              error={error && formData.moodInfluence.trim() === ''}
+              helperText={error && formData.moodInfluence.trim() === '' ? 'This field is required' : `${formData.moodInfluence.length}/150 characters`}
               inputProps={{ maxLength: 150 }}
             />
           </Box>
