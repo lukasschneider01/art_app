@@ -4,11 +4,21 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+// @route   GET api/survey/audio/:filename
+// @desc    Get audio file by filename
+// @access  Public
+router.get('/audio/:filename', (req, res) => {
+  const filePath = path.join(__dirname, '..', 'uploads', 'audio', req.params.filename);
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).json({ msg: 'Audio file not found' });
+  }
+});
+
 // Get base URL for file serving
 const getBaseUrl = () => {
-  return process.env.NODE_ENV === 'production'
-    ? 'https://art-app.onrender.com'
-    : 'http://localhost:5000';
+  return 'https://art-app.onrender.com';
 };
 
 // Configure multer for audio file uploads
@@ -26,7 +36,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
     const filetypes = /mp3|wav|ogg|m4a/;
@@ -54,9 +64,9 @@ router.post('/submit', upload.single('audioIntroduction'), async (req, res) => {
   try {
     const { token, surveyData } = req.body;
     const surveyDataObj = typeof surveyData === 'string' ? JSON.parse(surveyData) : surveyData;
-    
+
     // Verify token is valid
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       accessToken: token,
       accessTokenExpires: { $gt: new Date() }
     });
@@ -77,7 +87,7 @@ router.post('/submit', upload.single('audioIntroduction'), async (req, res) => {
     const survey = new Survey({
       user: user._id,
       ...surveyDataObj,
-      audioIntroduction: `${getBaseUrl()}/${req.file.path}`
+      audioIntroduction: `${getBaseUrl()}/api/survey/audio/${path.basename(req.file.path)}`
     });
 
     await survey.save();
@@ -97,7 +107,7 @@ router.get('/', [auth, admin], async (req, res) => {
     const surveys = await Survey.find()
       .sort({ submittedAt: -1 })
       .populate('user', ['name', 'email']);
-    
+
     res.json(surveys);
   } catch (err) {
     console.error(err.message);
@@ -111,11 +121,11 @@ router.get('/', [auth, admin], async (req, res) => {
 router.get('/check-submission/:userId', async (req, res) => {
   try {
     const survey = await Survey.findOne({ user: req.params.userId });
-    
+
     if (survey) {
       return res.json({ hasSubmitted: true, submittedAt: survey.submittedAt });
     }
-    
+
     res.json({ hasSubmitted: false });
   } catch (err) {
     console.error(err.message);
@@ -130,11 +140,11 @@ router.get('/:id', [auth, admin], async (req, res) => {
   try {
     const survey = await Survey.findById(req.params.id)
       .populate('user', ['name', 'email']);
-    
+
     if (!survey) {
       return res.status(404).json({ msg: 'Survey not found' });
     }
-    
+
     res.json(survey);
   } catch (err) {
     console.error(err.message);
@@ -153,10 +163,10 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
     const surveys = await Survey.find()
       .sort({ submittedAt: -1 })
       .populate('user', ['name', 'email']);
-    
+
     // Create CSV header
     let csv = 'Submission Date,Full Name,Email,Age,Country,Primary Discipline,Experience Years,Background,Training,Mediums,Hours Per Week,Platforms,Has Exhibited,Exhibition Source,Collaborates,Collaboration Description,Idea Generation,Uses References,Challenges,Monetizes,Monetization Methods,Five Year Goal,Platform Suggestion,Consent To Research,Wants Updates\n';
-    
+
     // Add each survey as a row
     surveys.forEach(survey => {
       const row = [
@@ -186,14 +196,14 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
         survey.consentToResearch,
         survey.wantsUpdates
       ];
-      
+
       csv += row.join(',') + '\n';
     });
-    
+
     // Set headers for file download
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=survey-responses.csv');
-    
+
     res.send(csv);
   } catch (err) {
     console.error(err.message);
