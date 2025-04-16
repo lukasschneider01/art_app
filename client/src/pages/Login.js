@@ -48,8 +48,25 @@ const Login = () => {
         console.log('Authentication state:', { isAuthenticated, user, loading });
         console.log('Admin user detected, redirecting to admin dashboard');
         setIsLoggingIn(false);
-        // Use React Router's navigate instead of window.location
-        navigate('/admin');
+
+        // Try both navigation methods to ensure one works
+        try {
+          // First try React Router navigation
+          navigate('/admin');
+
+          // As a fallback, use window.location after a small delay
+          // This ensures the React Router has a chance to work first
+          setTimeout(() => {
+            if (window.location.pathname !== '/admin') {
+              console.log('Fallback: using window.location for admin redirect');
+              window.location.href = '/admin';
+            }
+          }, 500);
+        } catch (navError) {
+          console.error('Navigation error:', navError);
+          // Fallback to direct location change if navigation fails
+          window.location.href = '/admin';
+        }
         return;
       }
 
@@ -70,7 +87,22 @@ const Login = () => {
             setFormError('You have already completed the survey. Thank you for your participation!');
           } else {
             // User has not submitted a survey yet - proceed to survey
-            navigate('/survey');
+            try {
+              // First try React Router navigation
+              navigate('/survey');
+
+              // As a fallback, use window.location after a small delay
+              setTimeout(() => {
+                if (window.location.pathname !== '/survey') {
+                  console.log('Fallback: using window.location for survey redirect');
+                  window.location.href = '/survey';
+                }
+              }, 500);
+            } catch (navError) {
+              console.error('Navigation error:', navError);
+              // Fallback to direct location change if navigation fails
+              window.location.href = '/survey';
+            }
           }
         } catch (surveyErr) {
           console.error('Error checking survey submission:', surveyErr);

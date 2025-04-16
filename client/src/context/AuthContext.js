@@ -93,14 +93,24 @@ export const AuthProvider = ({ children }) => {
 
       console.log('Login response received:', { token: 'exists', user: res.data.user });
 
-      // Set user data and token
-      setUser(res.data.user);
+      // Set token first to ensure it's available for subsequent requests
       setToken(res.data.token);
       setAuthToken(res.data.token);
+
+      // Set user data
+      setUser(res.data.user);
+
+      // Set authenticated state
       setIsAuthenticated(true);
 
-      // Load user data
-      await loadUser();
+      // Force a small delay to ensure state is updated before further operations
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Double check that authentication state is properly set
+      if (!isAuthenticated) {
+        console.log('Forcing authentication state update');
+        setIsAuthenticated(true);
+      }
 
       return res.data;
     } catch (err) {
