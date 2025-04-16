@@ -30,7 +30,7 @@ const Landing = () => {
             to support artists in sharing, collaborating, and growing their practice.
           </Typography>
           <Typography paragraph>
-            The survey takes approximately 20 minutes to complete and covers topics such as your artistic
+            The survey takes approximately 35 minutes to complete and covers topics such as your artistic
             background, creative process, and experiences with existing platforms.
           </Typography>
         </Grid>
