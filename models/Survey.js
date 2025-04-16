@@ -34,6 +34,9 @@ const SurveySchema = new Schema({
     enum: ['Less than 1 year', '1-3 years', '4-7 years', '8-10 years', 'Over 10 years'],
     required: true
   },
+  college: {
+    type: String
+  },
 
   // Artistic Experience
   background: {
@@ -54,6 +57,14 @@ const SurveySchema = new Schema({
   hoursPerWeek: {
     type: Number,
     required: true
+  },
+  artStyle: {
+    type: [String],
+    default: []
+  },
+  majorInfluences: {
+    type: [String],
+    default: []
   },
 
   // Sharing & Community
@@ -81,6 +92,14 @@ const SurveySchema = new Schema({
     type: String,
     minlength: 150,
     maxlength: 300
+  },
+  feedbackSource: {
+    type: [String],
+    default: []
+  },
+  communityParticipation: {
+    type: [String],
+    default: []
   },
 
   // Creative Process
@@ -118,6 +137,22 @@ const SurveySchema = new Schema({
     minlength: 150,
     maxlength: 300
   },
+  creativeRituals: {
+    type: [String],
+    default: []
+  },
+  toolsUsed: {
+    type: [String],
+    default: []
+  },
+  workEnvironment: {
+    type: String,
+    enum: ['Home studio', 'Shared workspace', 'Outdoors', 'On-the-go', 'Office', 'Other']
+  },
+  musicPreference: {
+    type: String,
+    enum: ['Always listen to music', 'Sometimes listen to music', 'Prefer silence', 'Ambient noise', 'Podcasts/Audiobooks', 'Varies by project']
+  },
 
   // Career & Goals
   monetizes: {
@@ -143,6 +178,14 @@ const SurveySchema = new Schema({
     required: true,
     minlength: 150,
     maxlength: 300
+  },
+  careerChallenges: {
+    type: [String],
+    default: []
+  },
+  skillsToImprove: {
+    type: [String],
+    default: []
   },
 
   // Consent

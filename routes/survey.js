@@ -202,7 +202,7 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
       .populate('user', ['name', 'email']);
 
     // Create CSV header
-    let csv = 'Submission Date,Full Name,Email,Age,Country,Primary Discipline,Experience Years,Background,Training,Mediums,Hours Per Week,Platforms,Has Exhibited,Exhibition Source,Collaborates,Collaboration Description,Idea Generation,Uses References,Challenges,Preferred Creation Time,Emotional State,Mood Influence,Monetizes,Monetization Methods,Five Year Goal,Platform Suggestion,Consent To Research,Wants Updates\n';
+    let csv = 'Submission Date,Full Name,Email,Age,Country,Primary Discipline,Experience Years,College,Background,Training,Mediums,Hours Per Week,Art Styles,Major Influences,Platforms,Platform Links,Has Exhibited,Exhibition Source,Collaborates,Collaboration Description,Feedback Sources,Community Participation,Idea Generation,Uses References,Challenges,Preferred Creation Time,Emotional State,Mood Influence,Creative Rituals,Tools Used,Work Environment,Music Preference,Monetizes,Monetization Methods,Five Year Goal,Platform Suggestion,Career Challenges,Skills To Improve,Consent To Research,Wants Updates\n';
 
     // Add each survey as a row
     surveys.forEach(survey => {
@@ -214,25 +214,37 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
         survey.country,
         survey.primaryDiscipline,
         survey.experienceYears,
+        `"${survey.college ? survey.college.replace(/"/g, '""') : ''}"`,
         `"${survey.background ? survey.background.replace(/"/g, '""') : ''}"`,
         survey.training,
         `"${survey.mediums.join(', ')}"`,
         survey.hoursPerWeek,
+        `"${survey.artStyle ? survey.artStyle.join(', ') : ''}"`,
+        `"${survey.majorInfluences ? survey.majorInfluences.join(', ') : ''}"`,
         `"${survey.platforms.join(', ')}"`,
+        `"${survey.platformLinks ? survey.platformLinks.replace(/"/g, '""') : ''}"`,
         survey.hasExhibited,
         survey.exhibitionSource || 'N/A',
         survey.collaborates,
         survey.collaborationDescription ? `"${survey.collaborationDescription.replace(/"/g, '""')}"` : '',
+        `"${survey.feedbackSource ? survey.feedbackSource.join(', ') : ''}"`,
+        `"${survey.communityParticipation ? survey.communityParticipation.join(', ') : ''}"`,
         `"${survey.ideaGeneration ? survey.ideaGeneration.replace(/"/g, '""') : ''}"`,
         survey.usesReferences,
         `"${survey.challenges ? survey.challenges.replace(/"/g, '""') : ''}"`,
         `"${survey.preferredCreationTime ? survey.preferredCreationTime.replace(/"/g, '""') : ''}"`,
         `"${survey.emotionalState ? survey.emotionalState.replace(/"/g, '""') : ''}"`,
         `"${survey.moodInfluence ? survey.moodInfluence.replace(/"/g, '""') : ''}"`,
+        `"${survey.creativeRituals ? survey.creativeRituals.join(', ') : ''}"`,
+        `"${survey.toolsUsed ? survey.toolsUsed.join(', ') : ''}"`,
+        survey.workEnvironment || '',
+        survey.musicPreference || '',
         survey.monetizes,
         `"${survey.monetizationMethods.join(', ')}"`,
         `"${survey.fiveYearGoal ? survey.fiveYearGoal.replace(/"/g, '""') : ''}"`,
         `"${survey.platformSuggestion ? survey.platformSuggestion.replace(/"/g, '""') : ''}"`,
+        `"${survey.careerChallenges ? survey.careerChallenges.join(', ') : ''}"`,
+        `"${survey.skillsToImprove ? survey.skillsToImprove.join(', ') : ''}"`,
         survey.consentToResearch,
         survey.wantsUpdates
       ];

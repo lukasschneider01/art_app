@@ -49,12 +49,15 @@ const Survey = () => {
     country: '',
     primaryDiscipline: '',
     experienceYears: '',
+    college: '',
 
     // Artistic Experience
     background: '',
     training: '',
     mediums: [],
     hoursPerWeek: '',
+    artStyle: [],
+    majorInfluences: [],
 
     // Sharing & Community
     platforms: [],
@@ -63,6 +66,8 @@ const Survey = () => {
     exhibitionSource: '',
     collaborates: '',
     collaborationDescription: '',
+    feedbackSource: [],
+    communityParticipation: [],
 
     // Creative Process
     ideaGeneration: '',
@@ -71,12 +76,18 @@ const Survey = () => {
     preferredCreationTime: '',
     emotionalState: '',
     moodInfluence: '',
+    creativeRituals: [],
+    toolsUsed: [],
+    workEnvironment: '',
+    musicPreference: '',
 
     // Career & Goals
     monetizes: '',
     monetizationMethods: [],
     fiveYearGoal: '',
     platformSuggestion: '',
+    careerChallenges: [],
+    skillsToImprove: [],
 
     // Consent
     consentToResearch: '',
@@ -505,6 +516,18 @@ const Survey = () => {
               )}
             </FormControl>
 
+            <TextField
+              label="College/University (if applicable)"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="college"
+              value={formData.college}
+              onChange={handleChange}
+              placeholder="Enter your college or university name if you have formal education"
+              sx={{ mb: 2 }}
+            />
+
             <Box sx={{ mb: 3 }}>
               <Typography variant="subtitle1" gutterBottom required>
                 Audio Introduction *
@@ -655,6 +678,44 @@ const Survey = () => {
                 <Typography variant="body2">40+ hours</Typography>
               </Box>
             </Box>
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>Which art styles do you typically work in?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Abstract', 'Realistic', 'Impressionistic', 'Surrealistic', 'Pop Art', 'Minimalist', 'Expressionism', 'Conceptual', 'Folk', 'Urban/Street', 'Traditional', 'Other'].map((style) => (
+                  <FormControlLabel
+                    key={style}
+                    control={
+                      <Checkbox
+                        checked={formData.artStyle.includes(style)}
+                        onChange={() => handleMultiCheckboxChange('artStyle', style)}
+                      />
+                    }
+                    label={style}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>Who or what are your major artistic influences?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Famous artists/masters', 'Contemporary artists', 'Art movements', 'Nature', 'Urban environment', 'Personal experiences', 'Literature', 'Music', 'Films', 'Cultural heritage', 'Social issues', 'Other'].map((influence) => (
+                  <FormControlLabel
+                    key={influence}
+                    control={
+                      <Checkbox
+                        checked={formData.majorInfluences.includes(influence)}
+                        onChange={() => handleMultiCheckboxChange('majorInfluences', influence)}
+                      />
+                    }
+                    label={influence}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
           </Box>
         );
 
@@ -772,6 +833,44 @@ const Survey = () => {
                 disabled={!formData.collaborates}
               />
             )}
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>Where do you typically get feedback on your work?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Friends and family', 'Online communities', 'Fellow artists', 'Teachers/mentors', 'Social media followers', 'Art classes/workshops', 'Gallery visitors', 'Client feedback', 'I rarely seek feedback', 'Other'].map((source) => (
+                  <FormControlLabel
+                    key={source}
+                    control={
+                      <Checkbox
+                        checked={formData.feedbackSource.includes(source)}
+                        onChange={() => handleMultiCheckboxChange('feedbackSource', source)}
+                      />
+                    }
+                    label={source}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>How do you participate in the artistic community?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Attend exhibitions/shows', 'Online forums/groups', 'Art classes/workshops', 'Local art groups', 'Art fairs/markets', 'Social media engagement', 'Mentoring others', 'Art challenges/competitions', 'I don\'t actively participate', 'Other'].map((participation) => (
+                  <FormControlLabel
+                    key={participation}
+                    control={
+                      <Checkbox
+                        checked={formData.communityParticipation.includes(participation)}
+                        onChange={() => handleMultiCheckboxChange('communityParticipation', participation)}
+                      />
+                    }
+                    label={participation}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
           </Box>
         );
 
@@ -876,11 +975,81 @@ const Survey = () => {
               required
               multiline
               rows={4}
-              sx={{ mb: 2 }}
+              sx={{ mb: 3 }}
               error={error && formData.moodInfluence.trim().length < 150}
               helperText={error && formData.moodInfluence.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.moodInfluence.length}/300 characters (min: 150)`}
               inputProps={{ maxLength: 300 }}
             />
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>Do you have any creative rituals or habits when you create art?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Sketching/planning before starting', 'Setting up a specific workspace', 'Having specific materials ready', 'Listening to specific music/sounds', 'Working at a specific time of day', 'Meditation or mindfulness practice', 'Physical warm-up exercises', 'Reviewing previous work first', 'Having refreshments (coffee, tea, etc.)', 'Cleaning workspace before starting', 'Other'].map((ritual) => (
+                  <FormControlLabel
+                    key={ritual}
+                    control={
+                      <Checkbox
+                        checked={formData.creativeRituals.includes(ritual)}
+                        onChange={() => handleMultiCheckboxChange('creativeRituals', ritual)}
+                      />
+                    }
+                    label={ritual}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>What specific tools/equipment do you regularly use in your process?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Computer/digital tablet', 'Traditional drawing tools', 'Paintbrushes', 'Cameras', 'Specialized software', 'Sculpting tools', 'Printing equipment', 'Easel', 'Drawing board', 'Lightbox/table', 'Reference books/materials', 'Color charts/wheels', 'Other'].map((tool) => (
+                  <FormControlLabel
+                    key={tool}
+                    control={
+                      <Checkbox
+                        checked={formData.toolsUsed.includes(tool)}
+                        onChange={() => handleMultiCheckboxChange('toolsUsed', tool)}
+                      />
+                    }
+                    label={tool}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal" sx={{ mb: 3 }}>
+              <InputLabel>Where do you typically create your art?</InputLabel>
+              <Select
+                name="workEnvironment"
+                value={formData.workEnvironment}
+                onChange={handleChange}
+                label="Where do you typically create your art?"
+              >
+                {['Home studio', 'Shared workspace', 'Outdoors', 'On-the-go', 'Office', 'Other'].map((environment) => (
+                  <MenuItem key={environment} value={environment}>
+                    {environment}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal" sx={{ mb: 3 }}>
+              <InputLabel>What is your preference regarding audio when creating art?</InputLabel>
+              <Select
+                name="musicPreference"
+                value={formData.musicPreference}
+                onChange={handleChange}
+                label="What is your preference regarding audio when creating art?"
+              >
+                {['Always listen to music', 'Sometimes listen to music', 'Prefer silence', 'Ambient noise', 'Podcasts/Audiobooks', 'Varies by project'].map((preference) => (
+                  <MenuItem key={preference} value={preference}>
+                    {preference}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         );
 
@@ -949,7 +1118,7 @@ const Survey = () => {
             />
 
             <TextField
-              label="What kind of platform would genuinely help you grow or showcase your work?"
+              label="What features would you like to see in a platform specifically designed for artists like you?"
               variant="outlined"
               fullWidth
               margin="normal"
@@ -959,11 +1128,49 @@ const Survey = () => {
               required
               multiline
               rows={4}
-              sx={{ mb: 2 }}
+              sx={{ mb: 3 }}
               error={error && formData.platformSuggestion.trim().length < 150}
               helperText={error && formData.platformSuggestion.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.platformSuggestion.length}/300 characters (min: 150)`}
               inputProps={{ maxLength: 300 }}
             />
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>What are your biggest challenges in advancing your artistic career?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Finding time to create', 'Financial constraints', 'Lack of exposure/visibility', 'Market saturation', 'Pricing artwork appropriately', 'Finding consistent clients', 'Developing a unique style', 'Technical skill development', 'Networking/marketing', 'Balancing commercial appeal with artistic vision', 'Self-doubt/impostor syndrome', 'Other'].map((challenge) => (
+                  <FormControlLabel
+                    key={challenge}
+                    control={
+                      <Checkbox
+                        checked={formData.careerChallenges.includes(challenge)}
+                        onChange={() => handleMultiCheckboxChange('careerChallenges', challenge)}
+                      />
+                    }
+                    label={challenge}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
+
+            <FormControl component="fieldset" margin="normal" sx={{ mb: 3, display: 'block' }}>
+              <FormLabel component="legend" sx={{ mb: 1 }}>Which skills would you like to improve most to advance your artistic practice?</FormLabel>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>(Select all that apply)</Typography>
+              <FormGroup>
+                {['Technical artistic skills', 'Digital/software skills', 'Business/marketing', 'Social media management', 'Photography of artwork', 'Writing about your work', 'Networking', 'Time management', 'Self-promotion', 'Public speaking/presenting', 'Teaching/workshop facilitation', 'Other'].map((skill) => (
+                  <FormControlLabel
+                    key={skill}
+                    control={
+                      <Checkbox
+                        checked={formData.skillsToImprove.includes(skill)}
+                        onChange={() => handleMultiCheckboxChange('skillsToImprove', skill)}
+                      />
+                    }
+                    label={skill}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
           </Box>
         );
 
