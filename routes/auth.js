@@ -97,7 +97,17 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        // Send both token and user data
+        res.json({
+          token,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isApproved: user.isApproved
+          }
+        });
       }
     );
   } catch (err) {
