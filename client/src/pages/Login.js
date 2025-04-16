@@ -40,37 +40,43 @@ const Login = () => {
   useEffect(() => {
     // Only proceed if we're authenticated and not loading
     if (isAuthenticated && user && !loading) {
+      // Clear any existing errors
+      setFormError('');
+
+      // Handle admin redirection immediately
       if (user.role === 'admin') {
+        setIsLoggingIn(false);
         navigate('/admin');
-      } else {
-        // Non-admin user flow
-        if (!user.isApproved) {
-          setFormError('Your account is pending approval. Please wait for admin approval.');
-          setIsLoggingIn(false);
-          return;
-        }
-
-        // Check if user has already submitted a survey
-        const checkSurveySubmission = async () => {
-          try {
-            const surveyRes = await api.get(`/api/survey/check-submission/${user._id}`);
-            if (surveyRes.data.hasSubmitted) {
-              // User has already submitted a survey - show message and prevent navigation
-              setFormError('You have already completed the survey. Thank you for your participation!');
-            } else {
-              // User has not submitted a survey yet - proceed to survey
-              navigate('/survey');
-            }
-          } catch (surveyErr) {
-            console.error('Error checking survey submission:', surveyErr);
-            setFormError('An error occurred while checking your survey status. Please try again.');
-          } finally {
-            setIsLoggingIn(false);
-          }
-        };
-
-        checkSurveySubmission();
+        return;
       }
+
+      // Non-admin user flow
+      if (!user.isApproved) {
+        setFormError('Your account is pending approval. Please wait for admin approval.');
+        setIsLoggingIn(false);
+        return;
+      }
+
+      // Check if user has already submitted a survey
+      const checkSurveySubmission = async () => {
+        try {
+          const surveyRes = await api.get(`/api/survey/check-submission/${user._id}`);
+          if (surveyRes.data.hasSubmitted) {
+            // User has already submitted a survey - show message and prevent navigation
+            setFormError('You have already completed the survey. Thank you for your participation!');
+          } else {
+            // User has not submitted a survey yet - proceed to survey
+            navigate('/survey');
+          }
+        } catch (surveyErr) {
+          console.error('Error checking survey submission:', surveyErr);
+          setFormError('An error occurred while checking your survey status. Please try again.');
+        } finally {
+          setIsLoggingIn(false);
+        }
+      };
+
+      checkSurveySubmission();
     } else if (!isAuthenticated && !loading) {
       // If not authenticated and not loading, ensure login state is reset
       setIsLoggingIn(false);
