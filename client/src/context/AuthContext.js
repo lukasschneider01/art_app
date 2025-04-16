@@ -31,11 +31,19 @@ export const AuthProvider = ({ children }) => {
         setUser(res.data);
         setIsAuthenticated(true);
       } catch (err) {
+        console.error('Error loading user:', err);
+        // Clear all auth state on error
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
         setAuthToken(null);
+        setError('Authentication failed. Please login again.');
       }
+    } else {
+      // No token found, ensure auth state is cleared
+      setUser(null);
+      setIsAuthenticated(false);
+      setAuthToken(null);
     }
     setLoading(false);
   };
@@ -46,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/api/auth/register', formData);
       return res.data;
     } catch (err) {
-      setError(err.response.data.msg);
+      setError(err.response?.data?.msg || 'Registration failed');
       throw err;
     }
   };
@@ -93,7 +101,7 @@ export const AuthProvider = ({ children }) => {
       const res = await api.get(`/api/auth/verify-token/${token}`);
       return res.data;
     } catch (err) {
-      setError(err.response.data.msg);
+      setError(err.response?.data?.msg || 'Token verification failed');
       throw err;
     }
   };

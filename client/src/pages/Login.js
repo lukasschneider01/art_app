@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Typography, TextField, Button, Paper, Box, Alert } from '@mui/material';
+import { Typography, TextField, Button, Paper, Box, Alert, CircularProgress } from '@mui/material';
 import AuthContext from '../context/AuthContext';
 import api from '../config/api';
 
@@ -14,6 +14,7 @@ const Login = () => {
   });
 
   const [formError, setFormError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { email, password } = formData;
 
@@ -23,21 +24,21 @@ const Login = () => {
     setFormError('');
   };
 
-  // Track if login is in progress to prevent multiple submissions
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  // Reset login state when component mounts or when auth state changes
+  useEffect(() => {
+    setIsLoggingIn(false);
+  }, []);
 
   // Handle user state changes for navigation
   useEffect(() => {
     // Only proceed if we're authenticated and not loading
-    if (isAuthenticated && user && !loading && isLoggingIn) {
+    if (isAuthenticated && user && !loading) {
       if (user.role === 'admin') {
         navigate('/admin');
-        setIsLoggingIn(false);
       } else {
         // Non-admin user flow
         if (!user.isApproved) {
           setFormError('Your account is pending approval. Please wait for admin approval.');
-          setIsLoggingIn(false);
           return;
         }
 
@@ -63,7 +64,7 @@ const Login = () => {
         checkSurveySubmission();
       }
     }
-  }, [isAuthenticated, user, loading, navigate, isLoggingIn]);
+  }, [isAuthenticated, user, loading, navigate]);
 
   const onSubmit = async e => {
     e.preventDefault();
@@ -81,10 +82,11 @@ const Login = () => {
 
     try {
       setIsLoggingIn(true);
+      setFormError('');
       await login({ email, password });
       // The useEffect hook will handle navigation after successful login
     } catch (err) {
-      console.error(err);
+      console.error('Login error:', err);
       setFormError('Login failed. Please check your credentials and try again.');
       setIsLoggingIn(false);
     }
@@ -109,6 +111,7 @@ const Login = () => {
           name="email"
           value={email}
           onChange={onChange}
+          disabled={isLoggingIn}
         />
 
         <TextField
@@ -120,6 +123,7 @@ const Login = () => {
           name="password"
           value={password}
           onChange={onChange}
+          disabled={isLoggingIn}
         />
 
         <Box sx={{ mt: 2 }}>
@@ -128,8 +132,9 @@ const Login = () => {
             variant="contained"
             color="primary"
             fullWidth
+            disabled={isLoggingIn}
           >
-            Login
+            {isLoggingIn ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
         </Box>
 
