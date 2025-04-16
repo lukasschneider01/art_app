@@ -23,8 +23,55 @@ const Login = () => {
     setFormError('');
   };
   
+  // Track if login is in progress to prevent multiple submissions
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Handle user state changes for navigation
+  useEffect(() => {
+    // Only proceed if we're authenticated and not loading
+    if (isAuthenticated && user && !loading && isLoggingIn) {
+      if (user.role === 'admin') {
+        navigate('/admin');
+        setIsLoggingIn(false);
+      } else {
+        // Non-admin user flow
+        if (!user.isApproved) {
+          setFormError('Your account is pending approval. Please wait for admin approval.');
+          setIsLoggingIn(false);
+          return;
+        }
+        
+        // Check if user has already submitted a survey
+        const checkSurveySubmission = async () => {
+          try {
+            const surveyRes = await api.get(`/api/survey/check-submission/${user._id}`);
+            if (surveyRes.data.hasSubmitted) {
+              // User has already submitted a survey - show message and prevent navigation
+              setFormError('You have already completed the survey. Thank you for your participation!');
+            } else {
+              // User has not submitted a survey yet - proceed to survey
+              navigate('/survey');
+            }
+          } catch (surveyErr) {
+            console.error('Error checking survey submission:', surveyErr);
+            setFormError('An error occurred while checking your survey status. Please try again.');
+          } finally {
+            setIsLoggingIn(false);
+          }
+        };
+        
+        checkSurveySubmission();
+      }
+    }
+  }, [isAuthenticated, user, loading, navigate, isLoggingIn]);
+  
   const onSubmit = async e => {
     e.preventDefault();
+    
+    // Prevent multiple login attempts
+    if (isLoggingIn) {
+      return;
+    }
     
     // Validate form
     if (!email || !password) {
@@ -33,43 +80,13 @@ const Login = () => {
     }
     
     try {
-      const result = await login({ email, password });
-      // Handle redirection after successful login based on user role
-      if (result && result.token) {
-        // Wait for user data to be loaded
-        setTimeout(async () => {
-          if (user) {
-            if (user.role === 'admin') {
-              navigate('/admin');
-            } else {
-              // Non-admin user flow
-              if (!user.isApproved) {
-                setFormError('Your account is pending approval. Please wait for admin approval.');
-                return;
-              }
-              
-              // Check if user has already submitted a survey
-              try {
-                const surveyRes = await api.get(`/api/survey/check-submission/${user._id}`);
-                if (surveyRes.data.hasSubmitted) {
-                  // User has already submitted a survey - show message and prevent navigation
-                  setFormError('You have already completed the survey. Thank you for your participation!');
-                  return;
-                } else {
-                  // User has not submitted a survey yet - proceed to survey
-                  navigate('/survey');
-                }
-              } catch (surveyErr) {
-                console.error('Error checking survey submission:', surveyErr);
-                setFormError('An error occurred while checking your survey status. Please try again.');
-              }
-            }
-          }
-        }, 100);
-      }
+      setIsLoggingIn(true);
+      await login({ email, password });
+      // The useEffect hook will handle navigation after successful login
     } catch (err) {
       console.error(err);
       setFormError('Login failed. Please check your credentials and try again.');
+      setIsLoggingIn(false);
     }
   };
   

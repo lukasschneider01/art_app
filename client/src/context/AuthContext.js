@@ -54,13 +54,27 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (formData) => {
     try {
+      // Clear any previous state
+      setError(null);
+      
       const res = await api.post('/api/auth/login', formData);
+      
+      // Set token first
       setToken(res.data.token);
       setAuthToken(res.data.token);
+      
+      // Load user data
       await loadUser();
+      
       return res.data;
     } catch (err) {
-      setError(err.response.data.msg);
+      // Clear authentication state on error
+      setToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      setAuthToken(null);
+      
+      setError(err.response?.data?.msg || 'Login failed');
       throw err;
     }
   };

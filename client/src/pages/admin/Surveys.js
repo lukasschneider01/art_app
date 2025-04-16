@@ -264,6 +264,15 @@ const AdminSurveys = () => {
                 
                 <Typography variant="subtitle2">Challenges</Typography>
                 <Typography variant="body1" paragraph>{selectedSurvey.challenges}</Typography>
+                
+                <Typography variant="subtitle2">Preferred Creation Time</Typography>
+                <Typography variant="body1" paragraph>{selectedSurvey.preferredCreationTime}</Typography>
+                
+                <Typography variant="subtitle2">Emotional State During Creation</Typography>
+                <Typography variant="body1" paragraph>{selectedSurvey.emotionalState}</Typography>
+                
+                <Typography variant="subtitle2">Mood Influence on Artistic Style</Typography>
+                <Typography variant="body1" paragraph>{selectedSurvey.moodInfluence}</Typography>
               </Box>
               
               <Box mb={3}>
