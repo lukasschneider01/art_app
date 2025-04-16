@@ -80,7 +80,7 @@ const AdminUsers = () => {
     if (!userToDelete) return;
     
     try {
-      await axios.delete(`/api/users/${userToDelete}`);
+      await api.delete(`/api/users/${userToDelete}`);
       
       // Remove user from state
       setUsers(users.filter(user => user._id !== userToDelete));

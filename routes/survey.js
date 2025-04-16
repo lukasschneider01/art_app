@@ -26,7 +26,7 @@ const getBaseUrl = () => {
 // Configure multer for audio file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'uploads/audio';
+    const uploadDir = path.join(__dirname, '..', 'uploads', 'audio');
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
