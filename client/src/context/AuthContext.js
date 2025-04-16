@@ -23,11 +23,19 @@ export const AuthProvider = ({ children }) => {
 
   // Load user
   const loadUser = async () => {
+    setLoading(true);
+
     if (token) {
       setAuthToken(token);
-      
+
       try {
         const res = await api.get('/api/users/me');
+
+        if (!res.data) {
+          throw new Error('No user data received');
+        }
+
+        // Set user data first, then authentication state
         setUser(res.data);
         setIsAuthenticated(true);
       } catch (err) {
@@ -37,14 +45,16 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setIsAuthenticated(false);
         setAuthToken(null);
-        setError('Authentication failed. Please login again.');
+        setError(err.response?.data?.msg || 'Authentication failed. Please login again.');
       }
     } else {
       // No token found, ensure auth state is cleared
+      setToken(null);
       setUser(null);
       setIsAuthenticated(false);
       setAuthToken(null);
     }
+
     setLoading(false);
   };
 
@@ -64,26 +74,35 @@ export const AuthProvider = ({ children }) => {
     try {
       // Clear any previous state
       setError(null);
-      
+      setLoading(true);
+
       const res = await api.post('/api/auth/login', formData);
-      
+
+      if (!res.data || !res.data.token) {
+        throw new Error('Invalid response from server');
+      }
+
       // Set token first
       setToken(res.data.token);
       setAuthToken(res.data.token);
-      
+
       // Load user data
       await loadUser();
-      
+
       return res.data;
     } catch (err) {
+      console.error('Login error details:', err);
+
       // Clear authentication state on error
       setToken(null);
       setUser(null);
       setIsAuthenticated(false);
       setAuthToken(null);
-      
-      setError(err.response?.data?.msg || 'Login failed');
+
+      setError(err.response?.data?.msg || err.message || 'Login failed');
       throw err;
+    } finally {
+      setLoading(false);
     }
   };
 

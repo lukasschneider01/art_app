@@ -29,6 +29,13 @@ const Login = () => {
     setIsLoggingIn(false);
   }, []);
 
+  // Reset login state when auth loading changes
+  useEffect(() => {
+    if (!loading) {
+      setIsLoggingIn(false);
+    }
+  }, [loading]);
+
   // Handle user state changes for navigation
   useEffect(() => {
     // Only proceed if we're authenticated and not loading
@@ -39,6 +46,7 @@ const Login = () => {
         // Non-admin user flow
         if (!user.isApproved) {
           setFormError('Your account is pending approval. Please wait for admin approval.');
+          setIsLoggingIn(false);
           return;
         }
 
@@ -63,6 +71,9 @@ const Login = () => {
 
         checkSurveySubmission();
       }
+    } else if (!isAuthenticated && !loading) {
+      // If not authenticated and not loading, ensure login state is reset
+      setIsLoggingIn(false);
     }
   }, [isAuthenticated, user, loading, navigate]);
 
@@ -111,7 +122,7 @@ const Login = () => {
           name="email"
           value={email}
           onChange={onChange}
-          disabled={isLoggingIn}
+          disabled={isLoggingIn || loading}
         />
 
         <TextField
@@ -123,7 +134,7 @@ const Login = () => {
           name="password"
           value={password}
           onChange={onChange}
-          disabled={isLoggingIn}
+          disabled={isLoggingIn || loading}
         />
 
         <Box sx={{ mt: 2 }}>
@@ -132,9 +143,9 @@ const Login = () => {
             variant="contained"
             color="primary"
             fullWidth
-            disabled={isLoggingIn}
+            disabled={isLoggingIn || loading}
           >
-            {isLoggingIn ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+            {isLoggingIn || loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
         </Box>
 
