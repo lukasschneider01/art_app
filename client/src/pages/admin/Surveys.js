@@ -18,10 +18,13 @@ import {
   DialogContent,
   DialogTitle,
   Chip,
-  Tooltip
+  Tooltip,
+  Grid,
+  Divider
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import CloseIcon from '@mui/icons-material/Close';
 import api from '../../config/api';
 
 const AdminSurveys = () => {
@@ -30,12 +33,12 @@ const AdminSurveys = () => {
   const [error, setError] = useState('');
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
-  
+
   // Fetch all surveys on component mount
   useEffect(() => {
     fetchSurveys();
   }, []);
-  
+
   const fetchSurveys = async () => {
     try {
       setLoading(true);
@@ -48,7 +51,7 @@ const AdminSurveys = () => {
       console.error(err);
     }
   };
-  
+
   // Handle export CSV
   const handleExportCSV = async () => {
     try {
@@ -58,18 +61,46 @@ const AdminSurveys = () => {
       console.error(err);
     }
   };
-  
+
   // Open survey detail dialog
   const openDetailDialog = (survey) => {
     setSelectedSurvey(survey);
     setDetailDialogOpen(true);
   };
-  
+
   // Format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
   };
-  
+
+  // Helper function to render array data as a list
+  const renderArrayField = (data, emptyMessage = "None specified") => {
+    if (!data || data.length === 0) return <Typography variant="body2" color="textSecondary">{emptyMessage}</Typography>;
+
+    return (
+      <ul style={{ margin: 0, paddingLeft: '1rem' }}>
+        {data.map((item, index) => (
+          <li key={index}>
+            <Typography variant="body2">{item}</Typography>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  // Helper function to format field display
+  const formatFieldValue = (value) => {
+    if (value === undefined || value === null || value === '') {
+      return <Typography variant="body2" color="textSecondary">Not specified</Typography>;
+    }
+
+    if (typeof value === 'boolean') {
+      return <Typography variant="body2">{value ? 'Yes' : 'No'}</Typography>;
+    }
+
+    return <Typography variant="body2">{value}</Typography>;
+  };
+
   return (
     <Paper className="form-container">
       <Box className="admin-header">
@@ -80,7 +111,7 @@ const AdminSurveys = () => {
           Back to Dashboard
         </Button>
       </Box>
-      
+
       <Box className="admin-nav" mb={4}>
         <Button component={Link} to="/admin" variant="outlined">
           Dashboard
@@ -92,7 +123,7 @@ const AdminSurveys = () => {
           View Surveys
         </Button>
       </Box>
-      
+
       <Box display="flex" justifyContent="flex-end" mb={3}>
         <Button
           variant="contained"
@@ -103,7 +134,7 @@ const AdminSurveys = () => {
           Export All as CSV
         </Button>
       </Box>
-      
+
       {loading ? (
         <Typography>Loading surveys...</Typography>
       ) : error ? (
@@ -141,8 +172,8 @@ const AdminSurveys = () => {
                   </TableCell>
                   <TableCell>
                     <Tooltip title="View Details">
-                      <IconButton 
-                        color="primary" 
+                      <IconButton
+                        color="primary"
                         onClick={() => openDetailDialog(survey)}
                       >
                         <VisibilityIcon />
@@ -155,164 +186,204 @@ const AdminSurveys = () => {
           </Table>
         </TableContainer>
       )}
-      
+
       {/* Survey Detail Dialog */}
       <Dialog
-        open={detailDialogOpen}
-        onClose={() => setDetailDialogOpen(false)}
+        open={!!selectedSurvey}
+        onClose={() => setSelectedSurvey(null)}
         maxWidth="md"
         fullWidth
       >
         {selectedSurvey && (
           <>
             <DialogTitle>
-              Survey Response Details
+              Survey Details
+              <IconButton
+                aria-label="close"
+                onClick={() => setSelectedSurvey(null)}
+                sx={{ position: 'absolute', right: 8, top: 8 }}
+              >
+                <CloseIcon />
+              </IconButton>
             </DialogTitle>
             <DialogContent dividers>
-              <Box mb={3}>
-                <Typography variant="h6" gutterBottom>Basic Information</Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">Full Name</Typography>
-                    <Typography variant="body1">{selectedSurvey.fullName}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">Email</Typography>
-                    <Typography variant="body1">{selectedSurvey.email}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">Age</Typography>
-                    <Typography variant="body1">{selectedSurvey.age}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">Country</Typography>
-                    <Typography variant="body1">{selectedSurvey.country}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">Primary Discipline</Typography>
-                    <Typography variant="body1">{selectedSurvey.primaryDiscipline}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">Experience</Typography>
-                    <Typography variant="body1">{selectedSurvey.experienceYears}</Typography>
-                  </Grid>
+              <Typography variant="h6" gutterBottom>Basic Profile</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Name</Typography>
+                  {formatFieldValue(selectedSurvey.fullName)}
                 </Grid>
-              </Box>
-              
-              <Box mb={3}>
-                <Typography variant="h6" gutterBottom>Audio Introduction</Typography>
-                {selectedSurvey.audioIntroduction && (
-                  <audio controls>
-                    <source src={selectedSurvey.audioIntroduction} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                )}
-              </Box>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Email</Typography>
+                  {formatFieldValue(selectedSurvey.email)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Age</Typography>
+                  {formatFieldValue(selectedSurvey.age)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Location</Typography>
+                  {formatFieldValue(selectedSurvey.country)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Gender</Typography>
+                  {formatFieldValue(selectedSurvey.gender)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">College/University</Typography>
+                  {formatFieldValue(selectedSurvey.college)}
+                </Grid>
+              </Grid>
 
-              <Box mb={3}>
-                <Typography variant="h6" gutterBottom>Artistic Experience</Typography>
-                <Typography variant="subtitle2">Background</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.background}</Typography>
-                
-                <Typography variant="subtitle2">Training</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.training}</Typography>
-                
-                <Typography variant="subtitle2">Mediums Used</Typography>
-                <Typography variant="body1" paragraph>
-                  {selectedSurvey.mediums.join(', ')}
-                </Typography>
-                
-                <Typography variant="subtitle2">Hours Per Week</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.hoursPerWeek}</Typography>
-              </Box>
-              
-              <Box mb={3}>
-                <Typography variant="h6" gutterBottom>Sharing & Community</Typography>
-                <Typography variant="subtitle2">Platforms Used</Typography>
-                <Typography variant="body1" paragraph>
-                  {selectedSurvey.platforms.length > 0 ? selectedSurvey.platforms.join(', ') : 'None'}
-                </Typography>
-                
-                <Typography variant="subtitle2">Has Exhibited Work</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.hasExhibited ? 'Yes' : 'No'}</Typography>
-                
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6" gutterBottom>Artistic Experience</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Years of Experience</Typography>
+                  {formatFieldValue(selectedSurvey.experienceYears)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Hours per Week</Typography>
+                  {formatFieldValue(selectedSurvey.hoursPerWeek)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Art Styles</Typography>
+                  {renderArrayField(selectedSurvey.artStyle)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Major Influences</Typography>
+                  {renderArrayField(selectedSurvey.majorInfluences)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Art Education</Typography>
+                  {formatFieldValue(selectedSurvey.training)}
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6" gutterBottom>Sharing & Community</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Has Exhibited Work</Typography>
+                  {formatFieldValue(selectedSurvey.hasExhibited)}
+                </Grid>
                 {selectedSurvey.hasExhibited && (
-                  <>
-                    <Typography variant="subtitle2">Exhibition Source</Typography>
-                    <Typography variant="body1" paragraph>{selectedSurvey.exhibitionSource}</Typography>
-                  </>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle1">Exhibition Source</Typography>
+                    {formatFieldValue(selectedSurvey.exhibitionSource)}
+                  </Grid>
                 )}
-                
-                <Typography variant="subtitle2">Collaborates with Others</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.collaborates ? 'Yes' : 'No'}</Typography>
-                
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Platform Links</Typography>
+                  {formatFieldValue(selectedSurvey.platformLinks)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Collaborates with Others</Typography>
+                  {formatFieldValue(selectedSurvey.collaborates)}
+                </Grid>
                 {selectedSurvey.collaborates && (
-                  <>
-                    <Typography variant="subtitle2">Collaboration Description</Typography>
-                    <Typography variant="body1" paragraph>{selectedSurvey.collaborationDescription}</Typography>
-                  </>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1">Collaboration Description</Typography>
+                    {formatFieldValue(selectedSurvey.collaborationDescription)}
+                  </Grid>
                 )}
-              </Box>
-              
-              <Box mb={3}>
-                <Typography variant="h6" gutterBottom>Creative Process</Typography>
-                <Typography variant="subtitle2">Idea Generation</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.ideaGeneration}</Typography>
-                
-                <Typography variant="subtitle2">Uses References</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.usesReferences ? 'Yes' : 'No'}</Typography>
-                
-                <Typography variant="subtitle2">Challenges</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.challenges}</Typography>
-                
-                <Typography variant="subtitle2">Preferred Creation Time</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.preferredCreationTime}</Typography>
-                
-                <Typography variant="subtitle2">Emotional State During Creation</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.emotionalState}</Typography>
-                
-                <Typography variant="subtitle2">Mood Influence on Artistic Style</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.moodInfluence}</Typography>
-              </Box>
-              
-              <Box mb={3}>
-                <Typography variant="h6" gutterBottom>Career & Goals</Typography>
-                <Typography variant="subtitle2">Monetizes Work</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.monetizes ? 'Yes' : 'No'}</Typography>
-                
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Feedback Sources</Typography>
+                  {renderArrayField(selectedSurvey.feedbackSource)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Community Participation</Typography>
+                  {formatFieldValue(selectedSurvey.communityParticipation)}
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6" gutterBottom>Creative Process</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Uses References</Typography>
+                  {formatFieldValue(selectedSurvey.usesReferences)}
+                </Grid>
+                {selectedSurvey.usesReferences && (
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1">Reference Description</Typography>
+                    {formatFieldValue(selectedSurvey.referenceDescription)}
+                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Creative Rituals</Typography>
+                  {renderArrayField(selectedSurvey.creativeRituals)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Tools Used</Typography>
+                  {renderArrayField(selectedSurvey.toolsUsed)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Preferred Creation Time</Typography>
+                  {formatFieldValue(selectedSurvey.preferredCreationTime)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Emotional State</Typography>
+                  {formatFieldValue(selectedSurvey.emotionalState)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Mood Influence</Typography>
+                  {formatFieldValue(selectedSurvey.moodInfluence)}
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6" gutterBottom>Career & Goals</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Monetizes Art</Typography>
+                  {formatFieldValue(selectedSurvey.monetizes)}
+                </Grid>
                 {selectedSurvey.monetizes && (
-                  <>
-                    <Typography variant="subtitle2">Monetization Methods</Typography>
-                    <Typography variant="body1" paragraph>
-                      {selectedSurvey.monetizationMethods.join(', ')}
-                    </Typography>
-                  </>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1">Monetization Methods</Typography>
+                    {formatFieldValue(selectedSurvey.monetizationMethods)}
+                  </Grid>
                 )}
-                
-                <Typography variant="subtitle2">Five Year Goal</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.fiveYearGoal}</Typography>
-                
-                <Typography variant="subtitle2">Platform Suggestion</Typography>
-                <Typography variant="body1" paragraph>{selectedSurvey.platformSuggestion}</Typography>
-              </Box>
-              
-              <Box>
-                <Typography variant="h6" gutterBottom>Consent & Updates</Typography>
-                <Typography variant="subtitle2">Consent to Research</Typography>
-                <Typography variant="body1" paragraph>
-                  {selectedSurvey.consentToResearch ? 'Yes' : 'No'}
-                </Typography>
-                
-                <Typography variant="subtitle2">Wants Updates</Typography>
-                <Typography variant="body1">
-                  {selectedSurvey.wantsUpdates ? 'Yes' : 'No'}
-                </Typography>
-              </Box>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Career Challenges</Typography>
+                  {renderArrayField(selectedSurvey.careerChallenges)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Skills to Improve</Typography>
+                  {renderArrayField(selectedSurvey.skillsToImprove)}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Future Goals</Typography>
+                  {formatFieldValue(selectedSurvey.fiveYearGoal)}
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6" gutterBottom>Consent & Updates</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Wants Updates</Typography>
+                  {formatFieldValue(selectedSurvey.wantsUpdates)}
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1">Consents to Research</Typography>
+                  {formatFieldValue(selectedSurvey.consentToResearch)}
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6" gutterBottom>Audio Introduction</Typography>
+              {selectedSurvey.audioIntroductionUrl ? (
+                <Box sx={{ my: 2 }}>
+                  <audio controls src={selectedSurvey.audioIntroductionUrl} style={{ width: '100%' }} />
+                </Box>
+              ) : (
+                <Typography variant="body2" color="error">Audio file not available</Typography>
+              )}
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setDetailDialogOpen(false)}>
-                Close
-              </Button>
+              <Button onClick={() => setSelectedSurvey(null)}>Close</Button>
             </DialogActions>
           </>
         )}
@@ -329,10 +400,10 @@ const Grid = ({ container, item, xs, spacing, children }) => {
       </Box>
     );
   }
-  
+
   return (
-    <Box sx={{ 
-      width: xs === 6 ? '50%' : '100%', 
+    <Box sx={{
+      width: xs === 6 ? '50%' : '100%',
       padding: spacing || 1,
       boxSizing: 'border-box'
     }}>

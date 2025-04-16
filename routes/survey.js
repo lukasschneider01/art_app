@@ -120,10 +120,18 @@ router.post('/submit', upload.single('audioIntroduction'), async (req, res) => {
       return res.status(400).json({ msg: 'Audio file is required' });
     }
 
+    // Clean up the data before saving
+    const cleanedData = { ...surveyDataObj };
+
+    // If user doesn't collaborate, remove the collaborationDescription requirement
+    if (cleanedData.collaborates === false) {
+      cleanedData.collaborationDescription = undefined; // This will be ignored by Mongoose
+    }
+
     // Create new survey response
     const survey = new Survey({
       user: user._id,
-      ...surveyDataObj,
+      ...cleanedData,
       audioIntroduction: `${getBaseUrl()}/api/survey/audio/${path.basename(req.file.path)}`
     });
 

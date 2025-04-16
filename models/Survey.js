@@ -90,8 +90,13 @@ const SurveySchema = new Schema({
   },
   collaborationDescription: {
     type: String,
-    minlength: 150,
-    maxlength: 300
+    minlength: function () {
+      return this.collaborates ? 150 : 0;
+    },
+    maxlength: 300,
+    required: function () {
+      return this.collaborates;
+    }
   },
   feedbackSource: {
     type: [String],

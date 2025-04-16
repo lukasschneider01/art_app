@@ -186,6 +186,11 @@ const Survey = () => {
         exhibitionSource: formData.hasExhibited ? formData.exhibitionSource : 'N/A'
       };
 
+      // If user doesn't collaborate, set collaborationDescription to empty string to avoid validation
+      if (surveyDataToSubmit.collaborates === false) {
+        surveyDataToSubmit.collaborationDescription = '';
+      }
+
       formDataToSend.append('surveyData', JSON.stringify(surveyDataToSubmit));
 
       if (formData.audioIntroduction) {
@@ -247,7 +252,7 @@ const Survey = () => {
         if (formData.hasExhibited && formData.exhibitionSource === '') {
           return false;
         }
-        if (formData.collaborates && formData.collaborationDescription.trim().length < 150) {
+        if (formData.collaborates === true && formData.collaborationDescription.trim().length < 150) {
           return false;
         }
         return true;
