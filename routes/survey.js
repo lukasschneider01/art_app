@@ -41,9 +41,14 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
-    const filetypes = /mp3|wav|ogg|m4a/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check file extension
+    const validExtensions = /mp3|wav|ogg|m4a/;
+    const extname = validExtensions.test(path.extname(file.originalname).toLowerCase());
+    
+    // Check MIME type - include audio/mpeg for MP3 files
+    const validMimeTypes = /audio\/mpeg|audio\/mp3|audio\/wav|audio\/ogg|audio\/m4a/;
+    const mimetype = validMimeTypes.test(file.mimetype);
+    
     if (mimetype && extname) {
       return cb(null, true);
     }
