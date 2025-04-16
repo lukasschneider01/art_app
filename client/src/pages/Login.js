@@ -48,8 +48,8 @@ const Login = () => {
         console.log('Authentication state:', { isAuthenticated, user, loading });
         console.log('Admin user detected, redirecting to admin dashboard');
         setIsLoggingIn(false);
-        // Force immediate navigation
-        window.location.href = '/admin';
+        // Use React Router's navigate instead of window.location
+        navigate('/admin');
         return;
       }
 
