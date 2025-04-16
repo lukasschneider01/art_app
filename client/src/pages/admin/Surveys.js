@@ -203,7 +203,7 @@ const AdminSurveys = () => {
                 <Typography variant="h6" gutterBottom>Audio Introduction</Typography>
                 {selectedSurvey.audioIntroduction && (
                   <audio controls>
-                    <source src={`http://localhost:5000/${selectedSurvey.audioIntroduction}`} type="audio/mpeg" />
+                    <source src={selectedSurvey.audioIntroduction} type="audio/mpeg" />
                     Your browser does not support the audio element.
                   </audio>
                 )}
