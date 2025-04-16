@@ -392,24 +392,4 @@ const AdminSurveys = () => {
   );
 };
 
-const Grid = ({ container, item, xs, spacing, children }) => {
-  if (container) {
-    return (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', margin: -1 * (spacing || 1) }}>
-        {children}
-      </Box>
-    );
-  }
-
-  return (
-    <Box sx={{
-      width: xs === 6 ? '50%' : '100%',
-      padding: spacing || 1,
-      boxSizing: 'border-box'
-    }}>
-      {children}
-    </Box>
-  );
-};
-
 export default AdminSurveys;
