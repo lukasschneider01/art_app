@@ -15,7 +15,10 @@ const api = axios.create({
     baseURL: getBaseUrl(),
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    maxContentLength: Infinity, // Allow large file uploads
+    maxBodyLength: Infinity, // Allow large file uploads
+    timeout: 60000 // Increase timeout for file uploads
 });
 
 // Add request interceptor for auth token
@@ -25,6 +28,12 @@ api.interceptors.request.use(
         if (token) {
             config.headers['x-auth-token'] = token;
         }
+
+        // Ensure correct content type for FormData
+        if (config.data instanceof FormData) {
+            config.headers['Content-Type'] = 'multipart/form-data';
+        }
+
         return config;
     },
     (error) => {

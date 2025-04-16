@@ -10,7 +10,21 @@ const fs = require('fs');
 router.get('/audio/:filename', (req, res) => {
   const filePath = path.join(__dirname, '..', 'uploads', 'audio', req.params.filename);
   if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
+    // Set appropriate content type based on file extension
+    const ext = path.extname(req.params.filename).toLowerCase();
+    let contentType = 'audio/mpeg'; // Default to MP3
+
+    if (ext === '.wav') contentType = 'audio/wav';
+    else if (ext === '.ogg') contentType = 'audio/ogg';
+    else if (ext === '.m4a') contentType = 'audio/mp4';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+
+    // Stream the file
+    const stream = fs.createReadStream(filePath);
+    stream.pipe(res);
   } else {
     res.status(404).json({ msg: 'Audio file not found' });
   }
@@ -41,18 +55,34 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
+    console.log("File MIME type:", file.mimetype);
+    console.log("File extension:", path.extname(file.originalname).toLowerCase());
+
     // Check file extension
-    const validExtensions = /mp3|wav|ogg|m4a/;
+    const validExtensions = /\.(mp3|wav|ogg|m4a)$/i;
     const extname = validExtensions.test(path.extname(file.originalname).toLowerCase());
 
-    // Check MIME type - include audio/mpeg for MP3 files
-    const validMimeTypes = /audio\/mpeg|audio\/mp3|audio\/wav|audio\/ogg|audio\/m4a/;
-    const mimetype = validMimeTypes.test(file.mimetype);
+    // Check MIME type - MP3 files can come with various MIME types
+    const validMimeTypes = [
+      'audio/mpeg',
+      'audio/mp3',
+      'audio/wav',
+      'audio/ogg',
+      'audio/m4a',
+      'audio/x-m4a',
+      'audio/x-mp3',
+      'audio/mp4',
+      'audio/aac',
+      'application/octet-stream' // Some browsers/systems send binary types for audio files
+    ];
 
-    if (mimetype && extname) {
+    // Accept file if either the extension or MIME type is valid
+    if (extname || validMimeTypes.includes(file.mimetype)) {
       return cb(null, true);
     }
-    cb(new Error('Only audio files are allowed!'));
+
+    console.log("File rejected: Invalid file type");
+    cb(new Error('Only audio files are allowed! Supported formats: MP3, WAV, OGG, M4A'));
   }
 });
 

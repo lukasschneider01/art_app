@@ -184,18 +184,33 @@ const Survey = () => {
         return;
       }
 
+      // Check audio file extension again
+      const audioFile = formData.audioIntroduction;
+      const fileExt = audioFile.name.substring(audioFile.name.lastIndexOf('.')).toLowerCase();
+      if (!['.mp3', '.wav', '.ogg', '.m4a'].includes(fileExt)) {
+        setError('Invalid audio file format. Supported formats: MP3, WAV, OGG, M4A');
+        return;
+      }
+
       // Use the centralized API module for form submission
-      await api.post('/api/survey/submit', formDataToSend, {
+      const response = await api.post('/api/survey/submit', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
+      console.log('Survey submission response:', response.data);
+
       // Redirect to thank you page
       navigate('/thank-you');
     } catch (err) {
-      setError('Error submitting survey. Please try again.');
-      console.error(err);
+      console.error('Error submitting survey:', err);
+      if (err.response) {
+        console.error('Error response data:', err.response.data);
+        setError(err.response.data.msg || 'Error submitting survey. Please try again.');
+      } else {
+        setError('Error submitting survey. Please try again.');
+      }
     }
   };
 
@@ -497,15 +512,37 @@ const Survey = () => {
               <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                 Please provide a brief audio introduction in English about your career or hobby as an artist
               </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                Supported formats: MP3, WAV, OGG, M4A (max 10MB)
+              </Typography>
               <input
-                accept=".mp3,.wav,.ogg,.m4a"
+                accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/m4a,audio/x-m4a,audio/mp4,.mp3,.wav,.ogg,.m4a"
                 type="file"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  setFormData(prev => ({
-                    ...prev,
-                    audioIntroduction: file
-                  }));
+                  if (file) {
+                    // Check file size (limit to 10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                      setError('File size exceeds 10MB limit. Please choose a smaller file.');
+                      e.target.value = null;
+                      return;
+                    }
+
+                    // Check file extension
+                    const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a'];
+                    const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                    if (!validExtensions.includes(fileExt)) {
+                      setError('Invalid file type. Supported formats: MP3, WAV, OGG, M4A');
+                      e.target.value = null;
+                      return;
+                    }
+
+                    setFormData(prev => ({
+                      ...prev,
+                      audioIntroduction: file
+                    }));
+                    setError('');
+                  }
                 }}
                 style={{ display: 'none' }}
                 id="audio-file-input"
@@ -522,6 +559,7 @@ const Survey = () => {
               {formData.audioIntroduction && (
                 <Typography variant="body2">
                   Selected file: {formData.audioIntroduction.name}
+                  ({Math.round(formData.audioIntroduction.size / 1024)} KB)
                 </Typography>
               )}
               {error && !formData.audioIntroduction && (
