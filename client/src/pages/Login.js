@@ -45,8 +45,10 @@ const Login = () => {
 
       // Handle admin redirection immediately
       if (user.role === 'admin') {
+        console.log('Admin user detected, redirecting to admin dashboard');
         setIsLoggingIn(false);
-        navigate('/admin');
+        // Force immediate navigation
+        window.location.href = '/admin';
         return;
       }
 

@@ -35,9 +35,17 @@ export const AuthProvider = ({ children }) => {
           throw new Error('No user data received');
         }
 
-        // Set user data first, then authentication state
-        setUser(res.data);
+        // Set authentication state first
         setIsAuthenticated(true);
+        // Then set user data to ensure proper state synchronization
+        setUser(res.data);
+
+        // Log authentication state for debugging
+        console.log('Auth state after load:', {
+          isAuthenticated: true,
+          user: res.data,
+          role: res.data.role
+        });
       } catch (err) {
         console.error('Error loading user:', err);
         // Clear all auth state on error

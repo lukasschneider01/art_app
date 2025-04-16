@@ -2,6 +2,11 @@ import axios from 'axios';
 
 // Determine the base URL based on environment
 const getBaseUrl = () => {
+    // Check if we're in development or production
+    if (process.env.NODE_ENV === 'development') {
+        // For local development, return empty string to use the proxy defined in package.json
+        return '';
+    }
     // For production
     return 'https://art-app.onrender.com';
 };
