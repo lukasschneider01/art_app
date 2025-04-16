@@ -83,12 +83,15 @@ export const AuthProvider = ({ children }) => {
       // Clear any previous state
       setError(null);
       setLoading(true);
+      console.log('Starting login process with:', { email: formData.email });
 
       const res = await api.post('/api/auth/login', formData);
 
       if (!res.data || !res.data.token) {
         throw new Error('Invalid response from server');
       }
+
+      console.log('Login response received:', { token: 'exists', user: res.data.user });
 
       // Set token first
       setToken(res.data.token);
@@ -100,6 +103,7 @@ export const AuthProvider = ({ children }) => {
       return res.data;
     } catch (err) {
       console.error('Login error details:', err);
+      console.log('Login error response:', err.response?.data);
 
       // Clear authentication state on error
       setToken(null);

@@ -45,6 +45,7 @@ const Login = () => {
 
       // Handle admin redirection immediately
       if (user.role === 'admin') {
+        console.log('Authentication state:', { isAuthenticated, user, loading });
         console.log('Admin user detected, redirecting to admin dashboard');
         setIsLoggingIn(false);
         // Force immediate navigation
@@ -53,6 +54,7 @@ const Login = () => {
       }
 
       // Non-admin user flow
+      console.log('Regular user detected:', { isAuthenticated, user, loading });
       if (!user.isApproved) {
         setFormError('Your account is pending approval. Please wait for admin approval.');
         setIsLoggingIn(false);
