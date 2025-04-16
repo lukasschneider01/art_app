@@ -34,11 +34,13 @@ const SurveySchema = new Schema({
     enum: ['Less than 1 year', '1-3 years', '4-7 years', '8-10 years', 'Over 10 years'],
     required: true
   },
-  
+
   // Artistic Experience
   background: {
     type: String,
-    required: true
+    required: true,
+    minlength: 150,
+    maxlength: 300
   },
   training: {
     type: String,
@@ -53,7 +55,7 @@ const SurveySchema = new Schema({
     type: Number,
     required: true
   },
-  
+
   // Sharing & Community
   platforms: {
     type: [String],
@@ -61,7 +63,7 @@ const SurveySchema = new Schema({
   },
   platformLinks: {
     type: String,
-    maxlength: 150
+    maxlength: 300
   },
   hasExhibited: {
     type: Boolean,
@@ -76,13 +78,17 @@ const SurveySchema = new Schema({
     required: true
   },
   collaborationDescription: {
-    type: String
+    type: String,
+    minlength: 150,
+    maxlength: 300
   },
-  
+
   // Creative Process
   ideaGeneration: {
     type: String,
-    required: true
+    required: true,
+    minlength: 150,
+    maxlength: 300
   },
   usesReferences: {
     type: Boolean,
@@ -90,15 +96,34 @@ const SurveySchema = new Schema({
   },
   challenges: {
     type: String,
-    required: true
+    required: true,
+    minlength: 150,
+    maxlength: 300
   },
-  
+  preferredCreationTime: {
+    type: String,
+    required: true,
+    minlength: 150,
+    maxlength: 300
+  },
+  emotionalState: {
+    type: String,
+    required: true,
+    minlength: 150,
+    maxlength: 300
+  },
+  moodInfluence: {
+    type: String,
+    required: true,
+    minlength: 150,
+    maxlength: 300
+  },
+
   // Career & Goals
   monetizes: {
     type: Boolean,
     required: true
   },
-
   audioIntroduction: {
     type: String,
     required: true
@@ -109,13 +134,17 @@ const SurveySchema = new Schema({
   },
   fiveYearGoal: {
     type: String,
-    required: true
+    required: true,
+    minlength: 150,
+    maxlength: 300
   },
   platformSuggestion: {
     type: String,
-    required: true
+    required: true,
+    minlength: 150,
+    maxlength: 300
   },
-  
+
   // Consent
   consentToResearch: {
     type: Boolean,
@@ -125,7 +154,7 @@ const SurveySchema = new Schema({
     type: Boolean,
     required: true
   },
-  
+
   submittedAt: {
     type: Date,
     default: Date.now

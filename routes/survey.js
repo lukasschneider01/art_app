@@ -44,11 +44,11 @@ const upload = multer({
     // Check file extension
     const validExtensions = /mp3|wav|ogg|m4a/;
     const extname = validExtensions.test(path.extname(file.originalname).toLowerCase());
-    
+
     // Check MIME type - include audio/mpeg for MP3 files
     const validMimeTypes = /audio\/mpeg|audio\/mp3|audio\/wav|audio\/ogg|audio\/m4a/;
     const mimetype = validMimeTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     }
@@ -172,7 +172,7 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
       .populate('user', ['name', 'email']);
 
     // Create CSV header
-    let csv = 'Submission Date,Full Name,Email,Age,Country,Primary Discipline,Experience Years,Background,Training,Mediums,Hours Per Week,Platforms,Has Exhibited,Exhibition Source,Collaborates,Collaboration Description,Idea Generation,Uses References,Challenges,Monetizes,Monetization Methods,Five Year Goal,Platform Suggestion,Consent To Research,Wants Updates\n';
+    let csv = 'Submission Date,Full Name,Email,Age,Country,Primary Discipline,Experience Years,Background,Training,Mediums,Hours Per Week,Platforms,Has Exhibited,Exhibition Source,Collaborates,Collaboration Description,Idea Generation,Uses References,Challenges,Preferred Creation Time,Emotional State,Mood Influence,Monetizes,Monetization Methods,Five Year Goal,Platform Suggestion,Consent To Research,Wants Updates\n';
 
     // Add each survey as a row
     surveys.forEach(survey => {
@@ -184,7 +184,7 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
         survey.country,
         survey.primaryDiscipline,
         survey.experienceYears,
-        `"${survey.background.replace(/"/g, '""')}"`,
+        `"${survey.background ? survey.background.replace(/"/g, '""') : ''}"`,
         survey.training,
         `"${survey.mediums.join(', ')}"`,
         survey.hoursPerWeek,
@@ -193,13 +193,16 @@ router.get('/export/csv', [auth, admin], async (req, res) => {
         survey.exhibitionSource || 'N/A',
         survey.collaborates,
         survey.collaborationDescription ? `"${survey.collaborationDescription.replace(/"/g, '""')}"` : '',
-        `"${survey.ideaGeneration.replace(/"/g, '""')}"`,
+        `"${survey.ideaGeneration ? survey.ideaGeneration.replace(/"/g, '""') : ''}"`,
         survey.usesReferences,
-        `"${survey.challenges.replace(/"/g, '""')}"`,
+        `"${survey.challenges ? survey.challenges.replace(/"/g, '""') : ''}"`,
+        `"${survey.preferredCreationTime ? survey.preferredCreationTime.replace(/"/g, '""') : ''}"`,
+        `"${survey.emotionalState ? survey.emotionalState.replace(/"/g, '""') : ''}"`,
+        `"${survey.moodInfluence ? survey.moodInfluence.replace(/"/g, '""') : ''}"`,
         survey.monetizes,
         `"${survey.monetizationMethods.join(', ')}"`,
-        `"${survey.fiveYearGoal.replace(/"/g, '""')}"`,
-        `"${survey.platformSuggestion.replace(/"/g, '""')}"`,
+        `"${survey.fiveYearGoal ? survey.fiveYearGoal.replace(/"/g, '""') : ''}"`,
+        `"${survey.platformSuggestion ? survey.platformSuggestion.replace(/"/g, '""') : ''}"`,
         survey.consentToResearch,
         survey.wantsUpdates
       ];

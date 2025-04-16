@@ -552,9 +552,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 3 }}
-              error={error && formData.background.trim() === ''}
-              helperText={error && formData.background.trim() === '' ? 'This field is required' : `${formData.background.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.background.trim().length < 150}
+              helperText={error && formData.background.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.background.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
 
             <FormControl component="fieldset" margin="normal" required sx={{ mb: 3, display: 'block' }} error={error && formData.training.trim() === ''}>
@@ -724,12 +724,14 @@ const Survey = () => {
                 name="collaborationDescription"
                 value={formData.collaborationDescription}
                 onChange={handleChange}
+                required={formData.collaborates}
                 multiline
-                rows={3}
-                sx={{ mb: 2 }}
-                error={error && formData.collaborates && formData.collaborationDescription.trim() === ''}
-                helperText={error && formData.collaborates && formData.collaborationDescription.trim() === '' ? 'Please describe your collaboration' : `${formData.collaborationDescription.length}/150 characters`}
-                inputProps={{ maxLength: 150 }}
+                rows={4}
+                sx={{ mb: 3 }}
+                error={error && formData.collaborates && formData.collaborationDescription.trim().length < 150}
+                helperText={error && formData.collaborates && formData.collaborationDescription.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.collaborationDescription.length}/300 characters (min: 150)`}
+                inputProps={{ maxLength: 300 }}
+                disabled={!formData.collaborates}
               />
             )}
           </Box>
@@ -754,9 +756,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 3 }}
-              error={error && formData.ideaGeneration.trim() === ''}
-              helperText={error && formData.ideaGeneration.trim() === '' ? 'This field is required' : `${formData.ideaGeneration.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.ideaGeneration.trim().length < 150}
+              helperText={error && formData.ideaGeneration.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.ideaGeneration.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
 
             <FormControl component="fieldset" margin="normal" required sx={{ mb: 3, display: 'block' }}>
@@ -786,9 +788,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 3 }}
-              error={error && formData.challenges.trim() === ''}
-              helperText={error && formData.challenges.trim() === '' ? 'This field is required' : `${formData.challenges.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.challenges.trim().length < 150}
+              helperText={error && formData.challenges.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.challenges.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
 
             <TextField
@@ -803,9 +805,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 3 }}
-              error={error && formData.preferredCreationTime.trim() === ''}
-              helperText={error && formData.preferredCreationTime.trim() === '' ? 'This field is required' : `${formData.preferredCreationTime.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.preferredCreationTime.trim().length < 150}
+              helperText={error && formData.preferredCreationTime.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.preferredCreationTime.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
 
             <TextField
@@ -820,9 +822,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 3 }}
-              error={error && formData.emotionalState.trim() === ''}
-              helperText={error && formData.emotionalState.trim() === '' ? 'This field is required' : `${formData.emotionalState.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.emotionalState.trim().length < 150}
+              helperText={error && formData.emotionalState.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.emotionalState.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
 
             <TextField
@@ -837,9 +839,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 2 }}
-              error={error && formData.moodInfluence.trim() === ''}
-              helperText={error && formData.moodInfluence.trim() === '' ? 'This field is required' : `${formData.moodInfluence.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.moodInfluence.trim().length < 150}
+              helperText={error && formData.moodInfluence.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.moodInfluence.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
           </Box>
         );
@@ -901,11 +903,11 @@ const Survey = () => {
               onChange={handleChange}
               required
               multiline
-              rows={3}
+              rows={4}
               sx={{ mb: 3 }}
-              error={error && formData.fiveYearGoal.trim() === ''}
-              helperText={error && formData.fiveYearGoal.trim() === '' ? 'This field is required' : `${formData.fiveYearGoal.length}/150 characters`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.fiveYearGoal.trim().length < 150}
+              helperText={error && formData.fiveYearGoal.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.fiveYearGoal.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
 
             <TextField
@@ -920,9 +922,9 @@ const Survey = () => {
               multiline
               rows={4}
               sx={{ mb: 2 }}
-              error={error && formData.platformSuggestion.trim() === ''}
-              helperText={error && formData.platformSuggestion.trim() === '' ? 'This field is required' : `${formData.platformSuggestion.length}/150 characters - This information will help inform the development of new tools for artists`}
-              inputProps={{ maxLength: 150 }}
+              error={error && formData.platformSuggestion.trim().length < 150}
+              helperText={error && formData.platformSuggestion.trim().length < 150 ? 'Please enter at least 150 characters' : `${formData.platformSuggestion.length}/300 characters (min: 150)`}
+              inputProps={{ maxLength: 300 }}
             />
           </Box>
         );
