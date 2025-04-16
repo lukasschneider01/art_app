@@ -50,6 +50,7 @@ const Survey = () => {
     primaryDiscipline: '',
     experienceYears: '',
     college: '',
+    gender: '',
 
     // Artistic Experience
     background: '',
@@ -239,6 +240,7 @@ const Survey = () => {
           formData.email.trim() !== '' &&
           formData.age.toString().trim() !== '' &&
           formData.country.trim() !== '' &&
+          formData.gender.trim() !== '' &&
           formData.primaryDiscipline.trim() !== '' &&
           formData.experienceYears.trim() !== ''
         );
@@ -478,6 +480,27 @@ const Survey = () => {
               error={error && formData.country.trim() === ''}
               helperText={error && formData.country.trim() === '' ? 'Country is required' : ''}
             />
+
+            <FormControl fullWidth margin="normal" required sx={{ mb: 2 }} error={error && formData.gender.trim() === ''}>
+              <InputLabel>Gender</InputLabel>
+              <Select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                label="Gender"
+              >
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Non-binary">Non-binary</MenuItem>
+                <MenuItem value="Prefer not to say">Prefer not to say</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+              {error && formData.gender.trim() === '' && (
+                <Typography color="error" variant="caption" sx={{ mt: 1, ml: 2 }}>
+                  Please select your gender
+                </Typography>
+              )}
+            </FormControl>
 
             <FormControl fullWidth margin="normal" required sx={{ mb: 2 }} error={error && formData.primaryDiscipline.trim() === ''}>
               <InputLabel>Primary Artistic Discipline</InputLabel>

@@ -24,6 +24,11 @@ const SurveySchema = new Schema({
     type: String,
     required: true
   },
+  gender: {
+    type: String,
+    enum: ['Male', 'Female', 'Non-binary', 'Prefer not to say', 'Other'],
+    required: true
+  },
   primaryDiscipline: {
     type: String,
     enum: ['Drawing', 'Painting', 'Photography', 'Graphic Design', 'Animation', 'Digital Art', 'Sculpture', 'Other'],

@@ -374,9 +374,9 @@ const AdminSurveys = () => {
 
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" gutterBottom>Audio Introduction</Typography>
-              {selectedSurvey.audioIntroductionUrl ? (
+              {selectedSurvey.audioIntroduction ? (
                 <Box sx={{ my: 2 }}>
-                  <audio controls src={selectedSurvey.audioIntroductionUrl} style={{ width: '100%' }} />
+                  <audio controls src={selectedSurvey.audioIntroduction} style={{ width: '100%' }} />
                 </Box>
               ) : (
                 <Typography variant="body2" color="error">Audio file not available</Typography>
