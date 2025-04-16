@@ -2,22 +2,15 @@ import axios from 'axios';
 
 // Determine the base URL based on environment
 const getBaseUrl = () => {
-    // Use environment variable if available
-    if (process.env.REACT_APP_API_URL) {
-        return process.env.REACT_APP_API_URL;
-    }
-    
-    // For local development
-    if (process.env.NODE_ENV === 'development') {
-        return 'http://localhost:5000';
-    }
-    
-    // For production, use relative URL to avoid CORS issues
-    return '';
+    // For production
+    return 'https://art-app.onrender.com';
 };
 
 const api = axios.create({
-    baseURL: getBaseUrl()
+    baseURL: getBaseUrl(),
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
 // Add request interceptor for auth token
@@ -40,7 +33,7 @@ api.interceptors.response.use(
     (error) => {
         // Log the error for debugging
         console.error('API Error:', error);
-        
+
         // Handle specific error cases
         if (error.response) {
             // The request was made and the server responded with a status code
@@ -51,7 +44,7 @@ api.interceptors.response.use(
             // The request was made but no response was received
             console.log('No response received:', error.request);
         }
-        
+
         return Promise.reject(error);
     }
 );
