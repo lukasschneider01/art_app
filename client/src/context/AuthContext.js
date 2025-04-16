@@ -87,15 +87,17 @@ export const AuthProvider = ({ children }) => {
 
       const res = await api.post('/api/auth/login', formData);
 
-      if (!res.data || !res.data.token) {
+      if (!res.data || !res.data.token || !res.data.user) {
         throw new Error('Invalid response from server');
       }
 
       console.log('Login response received:', { token: 'exists', user: res.data.user });
 
-      // Set token first
+      // Set user data and token
+      setUser(res.data.user);
       setToken(res.data.token);
       setAuthToken(res.data.token);
+      setIsAuthenticated(true);
 
       // Load user data
       await loadUser();
