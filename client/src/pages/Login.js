@@ -73,7 +73,9 @@ const Login = () => {
       // Non-admin user flow
       console.log('Regular user detected:', { isAuthenticated, user, loading });
       if (!user.isApproved) {
-        setFormError('Your account is pending approval. Please wait for admin approval.');
+        setFormError(
+          'Your account is pending approval. You will receive an email with a survey access link once an administrator approves your account. Thank you for your patience!'
+        );
         setIsLoggingIn(false);
         return;
       }
@@ -86,23 +88,12 @@ const Login = () => {
             // User has already submitted a survey - show message and prevent navigation
             setFormError('You have already completed the survey. Thank you for your participation!');
           } else {
-            // User has not submitted a survey yet - proceed to survey
-            try {
-              // First try React Router navigation
-              navigate('/survey');
+            // User has not submitted a survey yet - inform them about the email with access token
+            setFormError(
+              'Your account has been approved! Please check your email for a link to access the survey. The link contains your unique access token required to complete the survey.'
+            );
 
-              // As a fallback, use window.location after a small delay
-              setTimeout(() => {
-                if (window.location.pathname !== '/survey') {
-                  console.log('Fallback: using window.location for survey redirect');
-                  window.location.href = '/survey';
-                }
-              }, 500);
-            } catch (navError) {
-              console.error('Navigation error:', navError);
-              // Fallback to direct location change if navigation fails
-              window.location.href = '/survey';
-            }
+            // We don't automatically redirect to survey page anymore since they need the token from email
           }
         } catch (surveyErr) {
           console.error('Error checking survey submission:', surveyErr);
